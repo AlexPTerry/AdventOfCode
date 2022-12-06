@@ -10,5 +10,4 @@ for c in input_lines.read():
     if not any(char_no) and i > 14:
         break
 
-
 print(i)
