@@ -33,7 +33,6 @@ if listing:
     concat_array = []
     listing = False
 
-
 size_dict = dict()
 def sum_sizes(key):
     key_size = 0
@@ -47,10 +46,5 @@ def sum_sizes(key):
 
 
 sum_sizes(('/',))
-
-total_sum = 0
-for value in size_dict.values():
-    if value <= 100000:
-        total_sum = total_sum + value
-
-print(total_sum)
+space_to_clear = size_dict[('/',)] - 40000000
+print(min([val for val in size_dict.values() if val > space_to_clear]))
