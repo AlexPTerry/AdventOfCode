@@ -38,8 +38,10 @@ size_dict = dict()
 def sum_sizes(key):
     key_size = 0
     for e in file_dict[key]:
+        new_key = key + (e[1],)
         if e[0] == 'dir':
-            key_size = key_size + sum_sizes(key + (e[1],))
+            if new_key in file_dict.keys():
+                key_size = key_size + sum_sizes(new_key)
         else:
             key_size = key_size + int(e[0])
     size_dict[key] = key_size
