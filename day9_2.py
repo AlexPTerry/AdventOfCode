@@ -14,10 +14,9 @@ def move_t(h, t):
 
 input_file = open('input/input_day9_1.txt', 'r').read().strip().split('\n')
 
-h_pos = [0, 0]
-t_pos = [0, 0]
+snake_pos = [[0, 0] for _ in range(10)]
 
-t_history = {tuple(t_pos)}
+t_history = {tuple(snake_pos[9])}
 
 for line in input_file:
     vector = line.split(' ')
@@ -25,10 +24,10 @@ for line in input_file:
     distance = int(vector[1]) if vector[0] in ['U', 'R'] else -int(vector[1])
 
     for _ in range(abs(distance)):
-        h_pos[direction] += sign(distance)
-        t_pos = move_t(h_pos, t_pos)
-        t_history.add(tuple(t_pos))
-
+        snake_pos[0][direction] += sign(distance)
+        for i in range(1, 10):
+            snake_pos[i] = move_t(snake_pos[i-1], snake_pos[i])
+        t_history.add(tuple(snake_pos[9]))
 
 print(len(t_history))
 
