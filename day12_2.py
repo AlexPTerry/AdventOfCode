@@ -9,7 +9,6 @@ unvisited_nodes = []
 visited_nodes = []
 travel_dict = dict()
 
-
 width = len(input_file[0])
 height = len(input_file)
 
