@@ -2,7 +2,6 @@ from collections import defaultdict
 from numpy import sign
 
 input_file = open('input/input_day14_1.txt', 'r').read().strip().split('\n')
-# input_file = open('input/input_test.txt', 'r').read().strip().split('\n')
 
 cave_data = defaultdict(lambda: '.')
 
