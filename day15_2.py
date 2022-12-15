@@ -42,7 +42,7 @@ for yline in range(max_search_y):
     total_length = sum([frame[1] - frame[0] + 1 for frame in blocked_frames])
     if total_length <= max_search_x:
         x_pos = blocked_frames[0][1]+1
-        print(yline + max_search_x*x_pos)
+        print(int(yline + max_search_x*x_pos))
         break
 
 
