@@ -1,7 +1,10 @@
 import re
-from collections import defaultdict
+from collections import defaultdict, deque
+from copy import deepcopy
 
 input_file = open('input/input_day16_1.txt', 'r').read().strip().split('\n')
+start_valve = 'AA'
+max_time = 30
 
 adjacent_valves = {}
 valve_flow_rates = {}
@@ -19,7 +22,7 @@ for line in input_file:
 
     adjacent_valves[current_valve] = linked_valves
     valve_flow_rates[current_valve] = flow_rate
-    if flow_rate > 0:
+    if flow_rate > 0 or current_valve == start_valve:
         valuable_valves.add(current_valve)
 
 
@@ -54,30 +57,47 @@ for valve in valuable_valves:
     valve_distances[valve] = valve_dijkstra.run_dijkstras()
 
 
-max_time = 30
 time_open = 1
 
 opened_valves = set()
 
 
-def travel(c_valve, r_time, c_flow, max_flow, c_valuable_valves):
+def travel(c_valve, r_time, c_flow, max_flow, c_valuable_valves, path):
+    # print(path, r_time, c_flow)
     true_values = {}
-    for n_valve in valuable_valves:
+    for n_valve in c_valuable_valves:
         expected_flow = (r_time - valve_distances[c_valve][n_valve] - time_open)*valve_flow_rates[n_valve]
         true_values[n_valve] = expected_flow
-    valve_order = sorted(true_values.keys(), key=true_values.get)
-    for n_valve in valve_order:
+    valve_order = sorted(true_values.keys(), key=true_values.get, reverse=True)
+    paths = []
+    max_i = -1
+    if path == ['AA', 'CC', 'DD']:
+        print(path, c_valuable_valves, valve_order)
+    for i in range(len(valve_order)):
+        n_valve = valve_order[i]
         if r_time - valve_distances[c_valve][n_valve] - time_open < 0:
-            return max(c_flow, max_flow)
             break
         else:
-            c_valuable_valves.remove(n_valve)
+            n_valuable_valves = deepcopy(c_valuable_valves)
+            n_valuable_valves.remove(n_valve)
             n_flow = c_flow + (r_time - valve_distances[c_valve][n_valve] - time_open)*valve_flow_rates[n_valve]
-            max_flow = max(n_flow, max_flow)
-            return travel(n_valve, r_time - valve_distances[c_valve][n_valve] - time_open, n_flow, max_flow, c_valuable_valves)
+            n_max_flow, n_path = travel(n_valve, r_time - valve_distances[c_valve][n_valve] - time_open,
+                                        n_flow, max_flow, n_valuable_valves, path + [n_valve])
+            max_flow = max(n_max_flow, max_flow)
+            paths.append(n_path)
+            if max_flow == n_max_flow:
+                max_i = i
+    if max_i == -1:
+        return c_flow, deque([c_valve])
+    paths[max_i].appendleft(c_valve)
+    return max(c_flow, max_flow), paths[max_i]
 
 
-print(travel('IK', max_time, 0, 0, valuable_valves))
+# for key in valuable_valves:
+#     print(key, ':', valve_distances[key])
+#
+# print({key: valve_flow_rates[key] for key in valuable_valves})
+print(travel(start_valve, max_time, 0, 0, valuable_valves, [start_valve]))
 
 
 
