@@ -53,8 +53,31 @@ for valve in valuable_valves:
     valve_dijkstra = Dijkstra(list(valve_flow_rates.keys()), valve, valuable_valves, adjacent_valves)
     valve_distances[valve] = valve_dijkstra.run_dijkstras()
 
-print(len(valuable_valves))
 
+max_time = 30
+time_open = 1
+
+opened_valves = set()
+
+
+def travel(c_valve, r_time, c_flow, max_flow, c_valuable_valves):
+    true_values = {}
+    for n_valve in valuable_valves:
+        expected_flow = (r_time - valve_distances[c_valve][n_valve] - time_open)*valve_flow_rates[n_valve]
+        true_values[n_valve] = expected_flow
+    valve_order = sorted(true_values.keys(), key=true_values.get)
+    for n_valve in valve_order:
+        if r_time - valve_distances[c_valve][n_valve] - time_open < 0:
+            return max(c_flow, max_flow)
+            break
+        else:
+            c_valuable_valves.remove(n_valve)
+            n_flow = c_flow + (r_time - valve_distances[c_valve][n_valve] - time_open)*valve_flow_rates[n_valve]
+            max_flow = max(n_flow, max_flow)
+            return travel(n_valve, r_time - valve_distances[c_valve][n_valve] - time_open, n_flow, max_flow, c_valuable_valves)
+
+
+print(travel('IK', max_time, 0, 0))
 
 
 
