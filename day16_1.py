@@ -87,11 +87,11 @@ def travel(c_valve, r_time, c_flow, max_flow, c_valuable_valves, path):
     return max(c_flow, max_flow), paths[max_i]
 
 
-# for key in valuable_valves:
-#     print(key, ':', valve_distances[key])
-#
-# print({key: valve_flow_rates[key] for key in valuable_valves})
-print(travel(start_valve, max_time, 0, 0, valuable_valves, [start_valve]))
+for key in valuable_valves:
+    print(key, ':', valve_distances[key])
+
+print({key: valve_flow_rates[key] for key in valuable_valves})
+# print(travel(start_valve, max_time, 0, 0, valuable_valves, [start_valve]))
 
 
 
