@@ -77,7 +77,7 @@ def travel(c_valve, r_time, c_flow, max_flow, c_valuable_valves):
             return travel(n_valve, r_time - valve_distances[c_valve][n_valve] - time_open, n_flow, max_flow, c_valuable_valves)
 
 
-print(travel('IK', max_time, 0, 0))
+print(travel('IK', max_time, 0, 0, valuable_valves))
 
 
 
