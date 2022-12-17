@@ -58,10 +58,10 @@ for valve in valuable_valves:
     valve_distances[valve] = valve_dijkstra.run_dijkstras()
 
 
-time = 30
 location = deque([])
 path_dict = {}
-score = 0
+
+
 def travel(current_valve, current_time, unvisited_valves, score):
     end = True
     location.append(current_valve)
@@ -69,7 +69,7 @@ def travel(current_valve, current_time, unvisited_valves, score):
     valves_sorted = sorted(unvisited_valves, key=valve_distances[current_valve].get)
 
     for next_valve in valves_sorted:
-        next_time = current_time - valve_distances[current_valve][next_valve] - 1
+        next_time = current_time - valve_distances[current_valve][next_valve] - time_open
         if next_time < 0:
             break
         next_unvisited_valves = [valve for valve in deepcopy(unvisited_valves) if valve != next_valve]
@@ -81,7 +81,7 @@ def travel(current_valve, current_time, unvisited_valves, score):
     location.pop()
 
 
-travel('AA', 30, valuable_valves, 0)
+travel(start_valve, max_time, valuable_valves, 0)
 
 sorted_vals = sorted([(key, path_dict[key]) for key in path_dict.keys()], key=lambda x: x[1], reverse=True)
 top_vals = [sorted_vals[i] for i in range(10)]
