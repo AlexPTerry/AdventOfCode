@@ -58,40 +58,32 @@ for valve in valuable_valves:
     valve_distances[valve] = valve_dijkstra.run_dijkstras()
 
 
-def travel(c_valve, r_time, c_flow, max_flow, c_valuable_valves, path):
-    # print(path, r_time, c_flow)
-    true_values = {}
-    for n_valve in c_valuable_valves:
-        expected_flow = (r_time - valve_distances[c_valve][n_valve] - time_open)*valve_flow_rates[n_valve]
-        true_values[n_valve] = expected_flow
-    valve_order = sorted(true_values.keys(), key=true_values.get, reverse=True)
-    paths = []
-    max_i = -1
-    for i in range(len(valve_order)):
-        n_valve = valve_order[i]
-        if r_time - valve_distances[c_valve][n_valve] - time_open < 0:
+time = 30
+location = deque([])
+path_dict = {}
+score = 0
+def travel(current_valve, current_time, unvisited_valves, score):
+    end = True
+    location.append(current_valve)
+
+    valves_sorted = sorted(unvisited_valves, key=valve_distances[current_valve].get)
+
+    for next_valve in valves_sorted:
+        next_time = current_time - valve_distances[current_valve][next_valve] - 1
+        if next_time < 0:
             break
-        else:
-            n_valuable_valves = deepcopy(c_valuable_valves)
-            n_valuable_valves.remove(n_valve)
-            n_flow = c_flow + (r_time - valve_distances[c_valve][n_valve] - time_open)*valve_flow_rates[n_valve]
-            n_max_flow, n_path = travel(n_valve, r_time - valve_distances[c_valve][n_valve] - time_open,
-                                        n_flow, max_flow, n_valuable_valves, path + [n_valve])
-            max_flow = max(n_max_flow, max_flow)
-            paths.append(n_path)
-            if max_flow == n_max_flow:
-                max_i = i
-    if max_i == -1:
-        return c_flow, deque([c_valve])
-    paths[max_i].appendleft(c_valve)
-    return max(c_flow, max_flow), paths[max_i]
+        next_unvisited_valves = [valve for valve in deepcopy(unvisited_valves) if valve != next_valve]
+        next_score = score + next_time*valve_flow_rates[next_valve]
+        travel(next_valve, next_time, next_unvisited_valves, next_score)
+        end = False
+    if end:
+        path_dict[tuple(location)] = score
+    location.pop()
 
 
-for key in valuable_valves:
-    print(key, ':', valve_distances[key])
+travel('AA', 30, valuable_valves, 0)
 
-print({key: valve_flow_rates[key] for key in valuable_valves})
-# print(travel(start_valve, max_time, 0, 0, valuable_valves, [start_valve]))
+sorted_vals = sorted([(key, path_dict[key]) for key in path_dict.keys()], key=lambda x: x[1], reverse=True)
+top_vals = [sorted_vals[i] for i in range(10)]
 
-
-
+print(top_vals[0])
