@@ -31,8 +31,6 @@ def search_build(blueprint, n_robots, n_materials, depth, max_geode, path):
     if depth > max_depth \
             or current_state in state_list\
             or expected_materials(blueprint, 3, n_robots, n_materials, depth) <= max_geode:
-        if n_materials[3] > max_geode:
-            print(n_materials[3], max_geode, blueprint, path)
         return n_materials[3]
     state_list.add(current_state)
     buildable = reversed([(rtype, robot) for rtype, robot in enumerate(blueprint)
