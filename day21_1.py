@@ -14,10 +14,10 @@ def search_monkeys(monkey):
     if len(monkey_answer) == 1:
         return int(monkey_answer[0])
     else:
-        return int(binary[monkey_answer[1]](search_monkeys(monkey_answer[0]), search_monkeys(monkey_answer[2])))
+        return binary[monkey_answer[1]](search_monkeys(monkey_answer[0]), search_monkeys(monkey_answer[2]))
 
 
-print(search_monkeys('root'))
+print(int(search_monkeys('root')))
 
 
 
