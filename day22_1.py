@@ -1,11 +1,9 @@
 import re
 
 input_file = open('input/input_day22_1.txt', 'r').read().strip('\n').split('\n\n')
-# input_file = open('input/input_test.txt', 'r').read().split('\n\n')
-
-directions = input_file[1]
 
 input_grid = input_file[0].split('\n')
+directions = input_file[1]
 
 void = {x+1j*y for x in range(max(len(line) for line in input_grid)) for y in range(len(input_grid))}
 wall = set()
