@@ -15,7 +15,6 @@ grid = []
 
 for y, line in enumerate(input_grid):
     for x, char in enumerate(line):
-        # print((x, y), char)
         if char != ' ':
             tractable.add(x+1j*y)
             void.remove(x+1j*y)
@@ -48,13 +47,11 @@ player_pos = x_range[0][0] + 1j*0
 direction_list = [1, 1j, -1, -1j]
 direction_index = 0
 
-print(len(list(movements)), len(rotations))
-
 for movement, rotation in zip(movements, rotations + '_'):
     for _ in range(movement):
         direction = direction_list[direction_index]
         new_pos = player_pos + direction
-        if new_pos in void:
+        if new_pos in void or new_pos.real > x_max-1 or new_pos.real < 0 or new_pos.imag > y_max-1 or new_pos.imag < 0:
             if direction.imag == 0:
                 current_range = x_range[new_pos.imag]
                 modulo = current_range[1] - current_range[0] + 1
@@ -68,7 +65,6 @@ for movement, rotation in zip(movements, rotations + '_'):
             break
         else:
             player_pos = new_pos
-            # print(player_pos)
 
     if rotation == 'R':
         direction_index = (direction_index + 1) % 4
