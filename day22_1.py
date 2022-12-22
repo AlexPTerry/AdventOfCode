@@ -49,7 +49,7 @@ for movement, rotation in zip(movements, rotations + '_'):
     for _ in range(movement):
         direction = direction_list[direction_index]
         new_pos = player_pos + direction
-        if new_pos in void or new_pos.real > x_max-1 or new_pos.real < 0 or new_pos.imag > y_max-1 or new_pos.imag < 0:
+        if new_pos in void or new_pos.real > x_max or new_pos.real < 0 or new_pos.imag > y_max or new_pos.imag < 0:
             if direction.imag == 0:
                 current_range = x_range[new_pos.imag]
                 modulo = current_range[1] - current_range[0] + 1
