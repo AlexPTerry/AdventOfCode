@@ -10,20 +10,20 @@ y_len = len(input_file)
 
 repeat = lcm(x_len-2, y_len-2)
 
-player_position = 1+1j*0
-end_position = (x_len-2)+1j*(y_len-1)
+player_position_true = 1+1j*0
+end_position_true = (x_len-2)+1j*(y_len-1)
 player_movement = [1, -1, 1j, -1j, 0]
 
-grid = {i+1j*k for i in range(1, x_len-1) for k in range(1, y_len-1)} | {player_position, end_position}
+grid = {i+1j*k for i in range(1, x_len-1) for k in range(1, y_len-1)} | {player_position_true, end_position_true}
 
 directions = {'>': 1, 'v': 1, '<': -1, '^': -1}
-wind_cardinal = {'>': set(), 'v': set(), '<': set(), '^': set()}
+wind_cardinal_initial = {'>': set(), 'v': set(), '<': set(), '^': set()}
 for k, line in enumerate(input_file):
     for i, char in enumerate(line):
         if char in {'>', 'v', '<', '^'}:
-            wind_cardinal[char].add(i+1j*k)
+            wind_cardinal_initial[char].add(i+1j*k)
 
-wind_positions = set.union(*wind_cardinal.values())
+wind_positions_initial = set.union(*wind_cardinal_initial.values())
 
 
 def move_wind(wind_cardinal):
@@ -42,14 +42,14 @@ def move_wind(wind_cardinal):
     return updated_wind_cardinal
 
 
-wind_position_dict = {0: wind_cardinal}
-next_wind_cardinal = wind_cardinal
+wind_position_dict = {0: wind_cardinal_initial}
+next_wind_cardinal_initial = wind_cardinal_initial
 for i in range(1, 600):
-    next_wind_cardinal = move_wind(next_wind_cardinal)
-    wind_position_dict[i] = next_wind_cardinal
+    next_wind_cardinal_initial = move_wind(next_wind_cardinal_initial)
+    wind_position_dict[i] = next_wind_cardinal_initial
 
 
-def move_player(initial_player_position, initial_wind_cardinal, initial_depth):
+def move_player(initial_player_position, end_position, initial_wind_cardinal, initial_depth):
     S = deque([])
     S.append((initial_player_position, initial_wind_cardinal, initial_depth))
     state_set = set()
@@ -60,7 +60,7 @@ def move_player(initial_player_position, initial_wind_cardinal, initial_depth):
 
         state = (player_position, depth % repeat)
         if player_position == end_position:
-            return depth, state, state_dict
+            return depth, state, state_dict, wind_cardinal
 
         next_wind_cardinal = wind_position_dict[(depth+1) % repeat]
         next_wind_positions = set.union(*next_wind_cardinal.values())
@@ -76,42 +76,29 @@ def move_player(initial_player_position, initial_wind_cardinal, initial_depth):
                 state_dict[next_state] = state
 
 
-final_depth, end_state, state_dict = move_player(player_position, wind_cardinal, 0)
-print(final_depth, end_state)
+final_depth0, end_state0, state_dict0, wind_cardinal0 = move_player(player_position_true,
+                                                                    end_position_true, wind_cardinal_initial, 0)
 
-# Testing stuff below
+# Lazily copying and pasting code!
+wind_position_dict = {0: wind_cardinal0}
+next_wind_cardinal_initial = wind_cardinal0
+for i in range(1, 600):
+    next_wind_cardinal_initial = move_wind(next_wind_cardinal_initial)
+    wind_position_dict[i] = next_wind_cardinal_initial
+final_depth1, end_state1, state_dict1, wind_cardinal1 = move_player(end_position_true,
+                                                                    player_position_true, wind_cardinal0, 0)
 
-# current_state = end_state
-# state_path = [current_state]
-#
-# for i in range(final_depth):
-#     current_state = state_dict[current_state]
-#     state_path.append(current_state)
-#
-# for state in state_path[::-1]:
-#     print(state)
-#
-#
-# import numpy as np
-# wind_grid = np.array([['.' for i in range(x_len)] for j in range(y_len)], dtype=object)
-#
-# for i in range(final_depth+1):
-#     print(i)
-#     wind_grid = np.array([['.' for i in range(x_len)] for j in range(y_len)], dtype=object)
-#     for y, line in enumerate(wind_grid):
-#         for x, char in enumerate(line):
-#             if x + 1j*y in wind_cardinal['>']:
-#                 wind_grid[y][x] = '>'
-#             elif x + 1j*y in wind_cardinal['v']:
-#                 wind_grid[y][x] = 'v'
-#             elif x + 1j*y in wind_cardinal['<']:
-#                 wind_grid[y][x] = '<'
-#             elif x + 1j*y in wind_cardinal['^']:
-#                 wind_grid[y][x] = '^'
-#     for line in wind_grid:
-#         print(''.join(line))
-#
-#     wind_cardinal = move_wind(wind_cardinal)
+wind_position_dict = {0: wind_cardinal1}
+next_wind_cardinal_initial = wind_cardinal1
+for i in range(1, 600):
+    next_wind_cardinal_initial = move_wind(next_wind_cardinal_initial)
+    wind_position_dict[i] = next_wind_cardinal_initial
+final_depth2, end_state2, state_dict2, wind_cardinal2 = move_player(player_position_true,
+                                                                    end_position_true, wind_cardinal1, 0)
+
+
+print(f'{final_depth0} + {final_depth1} + {final_depth2} = {final_depth0+final_depth1+final_depth2}')
+
 
 
 
